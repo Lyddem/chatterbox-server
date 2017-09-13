@@ -19,7 +19,7 @@ var requestHandler = function(request, response) {
     if (request.url === '.../pictures')
 
      */
-console.log(response)
+  console.log(response);
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -40,7 +40,7 @@ console.log(response)
   var statusCode = 200;
 
   // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
+  // var headers = defaultCorsHeaders;
 
   // Tell the client we are sending them plain text.
   //
