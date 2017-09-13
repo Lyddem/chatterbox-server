@@ -13,6 +13,13 @@ this file and include it in basic-server.js so that it actually works.
 **************************************************************/
 
 var requestHandler = function(request, response) {
+/*
+  if (request.url === '.../')
+
+    if (request.url === '.../pictures')
+
+     */
+console.log(response)
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -52,6 +59,10 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
+
+
+  response.status(statusCode);
+
   response.end('Hello, World!');
 };
 
@@ -70,4 +81,8 @@ var defaultCorsHeaders = {
   'access-control-allow-headers': 'content-type, accept',
   'access-control-max-age': 10 // Seconds.
 };
+
+console.log('----------------------------> ABOUT OT EXPORT');
+module.exports = requestHandler;
+
 
