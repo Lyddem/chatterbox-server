@@ -13,13 +13,21 @@ this file and include it in basic-server.js so that it actually works.
 **************************************************************/
 
 var requestHandler = function(request, response) {
-/*
-  if (request.url === '.../')
 
-    if (request.url === '.../pictures')
+  var messages = [];
 
-     */
-  console.log(response);
+  var statusCode;
+  console.log('REQ URL', request.url);
+
+  if (request.method === 'POST' && request.url === '/classes/messages') {
+
+    statusCode = 201;
+  } else if(request.method === 'GET' && request.url === '/classes/messages') {
+    statusCode = 200;
+  } else {
+    statusCode = 404;
+  }
+  console.log('REQUEST METHOD', request.method);
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -37,16 +45,16 @@ var requestHandler = function(request, response) {
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
 
   // The outgoing status.
-  var statusCode = 200;
+
 
   // See the note below about CORS headers.
-  // var headers = defaultCorsHeaders;
-
+  var headers = defaultCorsHeaders;
+  console.log('HEADERS ARE-------------------------------', defaultCorsHeaders)
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = 'text/plain';
+  headers['Content-Type'] = 'application/json';
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
@@ -60,10 +68,24 @@ var requestHandler = function(request, response) {
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
 
+  let body = [];
 
-  response.status(statusCode);
+  request.on('data', chunk => {
+    body.push(chunk);
+    console.log('Data received', body.join('').toString());
+    //parse
 
-  response.end('Hello, World!');
+  });
+  const responseObject = {};
+  responseObject.results= messages;
+  '{"userName": "this is one"}';
+// Buffer.concat(body).toString();
+  //response.send(statusCode);
+  // response.statusCode = 200;
+
+  response.end(JSON.stringify(responseObject), res => {
+     messages.push(JSON.parse(body.join('').toString()));
+  });
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
@@ -85,4 +107,11 @@ var defaultCorsHeaders = {
 console.log('----------------------------> ABOUT OT EXPORT');
 module.exports = requestHandler;
 
+/*
 
+{
+  "message": "Hello, test",
+  "username": "Jonathan"
+}
+
+*/
