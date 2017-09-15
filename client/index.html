@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -6,7 +6,13 @@
     <link rel="stylesheet" href="styles/styles.css">
 
     <!-- dependencies -->
-    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+            crossorigin="anonymous"></script>
+
+    <!-- <script src="bower_components/jquery/dist/jquery.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script>
       // YOU DO NOT NEED TO EDIT THIS CODE
       if (!/(&|\?)username=/.test(window.location.search)) {
@@ -19,14 +25,49 @@
       }
     </script>
     <!-- your scripts -->
-    <script src="env/config.js"></script>
     <script src="scripts/app.js"></script>
   </head>
   <body>
     <div id="main">
       <h1>chatterbox</h1>
-      <!-- Your HTML goes here! -->
+        <div id="rooms">
+          <b>Room: </b> <select id="roomSelect">
+              <option class="lobby" value="lobby">lobby</option>
+              <option class="friends" value="friends" >friends</option>
+              <option class="best friends" value="best friends"> best friends</option>
+            </select>
+        </div> <br />
+         <div id="createRoom">
+            <input type="text" id="newRoom">
+            <button class="createRoom">Create Room</button>
+         </div>
+        <br/>
+     <input type="text" id="message">
+     <button class="submit" id="send">Submit</button>
+     <br /> <br />
+     <div class="username">Your Friends:
+     </div>
+
+     <script>
+
+        $('.createRoom').on('click', function() {
+          window.newRoom = $('#newRoom').val();
+          app.renderRoom(window.newRoom);
+          $('#newRoom').val("");
+        })
+
+        // $('.submit').on('click', function(){
+        //   window.text = $('#message').val();
+        //   //alert(window.text);
+        //   $('#chats').append("<p>" + message.username + ': ' + window.text + "</p>");
+        //   app.send(window.text);
+        //   $('#message').val("");
+        //})
+     </script>
     </div>
     <div id="chats"></div>
   </body>
 </html>
+
+
+

@@ -11,23 +11,51 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+const querystring = require('query  string');
+
+const messages = [];
 
 var requestHandler = function(request, response) {
 
-  var messages = [];
-
   var statusCode;
-  console.log('REQ URL', request.url);
-
   if (request.method === 'POST' && request.url === '/classes/messages') {
 
+    let body = '';
+    request.on('data', chunk => {
+      body += chunk;
+
+      // console.log('Data received ---------------------- BODY IS', body);
+
+      messages.unshift(JSON.parse(body));
+    });
+
     statusCode = 201;
-  } else if(request.method === 'GET' && request.url === '/classes/messages') {
-    statusCode = 200;
-  } else {
-    statusCode = 404;
-  }
-  console.log('REQUEST METHOD', request.method);
+
+    } else if (request.method === 'GET' && request.url.startsWith('/classes/messages')) {
+      statusCode = 200;
+
+        //if it has a roomname...
+        if(request.url.indexOf('?') !== -1) {
+        var headers = defaultCorsHeaders;
+        headers['Content-Type'] = 'application/json';
+        response.writeHead(statusCode, headers);
+
+          var responseObject = {};
+          var query = querystring.parse(request.url.substr(request.url.indexOf('?') + 1));
+          responseObject.results = messages.filter(function(obj) {
+            return obj.roomname === query.roomname;
+          });
+            response.end(JSON.stringify(responseObject));
+          return;
+        } else {
+           statusCode = 404;
+    }
+}
+  // const responseObject = {};
+  // responseObject.results = messages;
+  // response.end(JSON.stringify(responseObject), function() {});
+
+  // console.log('REQUEST METHOD', request.method);
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -49,7 +77,7 @@ var requestHandler = function(request, response) {
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
-  console.log('HEADERS ARE-------------------------------', defaultCorsHeaders)
+  //console.log('HEADERS ARE-------------------------------', defaultCorsHeaders)
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
@@ -68,23 +96,12 @@ var requestHandler = function(request, response) {
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
 
-  let body = [];
+  //when server recieves data...
+  var responseObject = {};
+  responseObject.results = messages;
 
-  request.on('data', chunk => {
-    body.push(chunk);
-    console.log('Data received', body.join('').toString());
-    //parse
-
-  });
-  const responseObject = {};
-  responseObject.results= messages;
-  '{"userName": "this is one"}';
-// Buffer.concat(body).toString();
-  //response.send(statusCode);
-  // response.statusCode = 200;
-
-  response.end(JSON.stringify(responseObject), res => {
-     messages.push(JSON.parse(body.join('').toString()));
+  response.end(JSON.stringify(responseObject), function() {
+    console.log(responseObject);
   });
 };
 
@@ -104,14 +121,41 @@ var defaultCorsHeaders = {
   'access-control-max-age': 10 // Seconds.
 };
 
-console.log('----------------------------> ABOUT OT EXPORT');
-module.exports = requestHandler;
+console.log('----------------------------> ABOUT To EXPORT');
+module.exports.requestHandler = requestHandler;
 
 /*
+throws error if no room.
+expect('.........')
+  if (!JSON.parse(body).roomname) {
+    throw new error('You must supply a roomname')
+ }
+returns messages with dateTime()
 
-{
-  "message": "Hello, test",
-  "username": "Jonathan"
-}
+test filter by room.
+//sends in a specific room name -- response has that roomname.
+//submit 3 different rooms
+//expect "filtered" room
 
+var messages = JSON.parse(body).results;
+        expect(messages[message.length - 1].roomname).;
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

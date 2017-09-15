@@ -116,4 +116,46 @@ describe('Node Server Request Listener Function', function() {
       });
   });
 
+it('should be able to respond with filtered rooms', function() {
+   var Msg1 = {
+      username: 'Jono',
+      message: 'Do my bidding!',
+      roomname: 'lobby'
+    };
+    var Msg2 = {
+      username: 'Jono',
+      message: 'Do my bidding!',
+      roomname: 'friend'
+    };
+    var Msg3 = {
+      username: 'Jono',
+      message: 'Do my bidding!',
+      roomname: 'best friend'
+    };
+
+    req = new stubs.request('/classes/messages', 'POST', Msg1);
+    res = new stubs.response();
+    handler.requestHandler(req, res);
+
+    req = new stubs.request('/classes/messages', 'GET');
+    res = new stubs.response();
+    handler.requestHandler(req, res);
+    console.log('GET RESPONSE', res);
+
+    req = new stubs.request('/classes/messages', 'POST', Msg2);
+    res = new stubs.response();
+    handler.requestHandler(req, res);
+
+    req = new stubs.request('/classes/messages', 'POST', Msg3);
+    res = new stubs.response();
+    handler.requestHandler(req, res);
+
+    // console.log('RES DATA',JSON.parse(res._data).results[0].roomname);
+
+    var messages = JSON.parse(res._data).results;
+    //....filter
+    handler.requestHandler(req, res);
+    expect(messages[0].roomname).to.equal('lobby');
+})
+
 });
